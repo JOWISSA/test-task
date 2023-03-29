@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pepperi test task</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <div class="container">
+      <main>
+        <div class="input-container">
+          <input type="text" class="name-value-input" placeholder="format: 'name = value'">
+          <button class="addButton">Add</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th class="name">Name</th>
+              <th class="value">Value</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div class="sort-buttons">
+          <button id="sort-name-button">Sort by Name</button>
+          <button id="sort-value-button">Sort by Value</button>
+        </div>
+
+        <div class="other-buttons">
+          <button id="xml-button">Show as XML</button>
+          <button id="delete-button">Delete</button>
+        </div>
+      </main>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
