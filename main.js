@@ -169,4 +169,3 @@ xmlBtn.addEventListener('click', () => {
 
   window.open(xmlString);
 });
-
