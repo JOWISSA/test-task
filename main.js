@@ -107,56 +107,22 @@ table.addEventListener('dblclick', (event) => {
 });
 
 saveBtn.addEventListener('click', () => {
-  const rows = tableBody.querySelectorAll('tr');
   const xmlDoc = document.implementation.createDocument(null, 'root', null);
-
-  const items = xmlDoc.createElement('items');
-  xmlDoc.documentElement.appendChild(items);
-
-  rows.forEach(row => {
-    const item = xmlDoc.createElement('item');
-    items.appendChild(item);
-
-    const name = xmlDoc.createElement('name');
-    name.textContent = row.cells[0].innerText;
-    item.appendChild(name);
-
-    const value = xmlDoc.createElement('value');
-    value.textContent = row.cells[1].innerText;
-    item.appendChild(value);
-  });
-
-  const serializer = new XMLSerializer();
-  const xmlString = serializer.serializeToString(xmlDoc);
-
-  const xmlBlob = new Blob([xmlString], { type: 'application/xml' });
-  const xmlUrl = URL.createObjectURL(xmlBlob);
-  const downloadLink = document.createElement('a');
-  downloadLink.href = xmlUrl;
-  downloadLink.download = 'data.xml';
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  document.body.removeChild(downloadLink);
-  URL.revokeObjectURL(xmlUrl);
-});
-
-xmlBtn.addEventListener('click', () => {
-  const xmlDoc = document.implementation.createDocument(null, 'root', null);
-
   const rootElement = xmlDoc.documentElement;
 
   const tableRows = tableBody.querySelectorAll('tr');
-
-  tableRows.forEach((row) => {
+  tableRows.forEach(function(row) {
     const itemElement = xmlDoc.createElement('item');
 
     const nameElement = xmlDoc.createElement('name');
     const nameValue = row.cells[0].textContent;
-    nameElement.textContent = nameValue;
+    const nameObj = {name: nameValue};
+    nameElement.textContent = JSON.stringify(nameObj);
 
     const valueElement = xmlDoc.createElement('value');
     const valueText = row.cells[1].textContent;
-    valueElement.textContent = valueText;
+    const valueObj = {value: valueText};
+    valueElement.textContent = JSON.stringify(valueObj);
 
     itemElement.appendChild(nameElement);
     itemElement.appendChild(valueElement);
@@ -164,8 +130,62 @@ xmlBtn.addEventListener('click', () => {
     rootElement.appendChild(itemElement);
   });
 
-  const serializer = new XMLSerializer();
-  const xmlString = serializer.serializeToString(xmlDoc);
+  const xmlSerializer = new XMLSerializer();
+  const xmlDocument = xmlSerializer.serializeToString(xmlDoc);
 
-  window.open(xmlString);
+  const parser = new DOMParser();
+  const xmlNode = parser.parseFromString(xmlDocument, 'text/xml').documentElement;
+
+  const xmlBlob = new Blob([xmlNode.outerHTML], { type: 'text/xml' });
+  const xmlUrl = URL.createObjectURL(xmlBlob);
+
+  const downloadLink = document.createElement('a');
+  downloadLink.href = xmlUrl;
+  downloadLink.download = 'data-of-input.xml';
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+  URL.revokeObjectURL(xmlUrl);
+});
+
+
+
+xmlBtn.addEventListener('click', () => {
+  const xmlDoc = document.implementation.createDocument(null, 'root', null);
+  const rootElement = xmlDoc.documentElement;
+
+  const tableRows = tableBody.querySelectorAll('tr');
+  tableRows.forEach(function(row) {
+    const itemElement = xmlDoc.createElement('item');
+
+    const nameElement = xmlDoc.createElement('name');
+    const nameValue = row.cells[0].textContent;
+    const nameObj = {name: nameValue};
+    nameElement.textContent = JSON.stringify(nameObj);
+
+    const valueElement = xmlDoc.createElement('value');
+    const valueText = row.cells[1].textContent;
+    const valueObj = {value: valueText};
+    valueElement.textContent = JSON.stringify(valueObj);
+
+    itemElement.appendChild(nameElement);
+    itemElement.appendChild(valueElement);
+
+    rootElement.appendChild(itemElement);
+  });
+
+  const xmlSerializer = new XMLSerializer();
+  const xmlDocument = xmlSerializer.serializeToString(xmlDoc);
+
+  const parser = new DOMParser();
+  const xmlNode = parser.parseFromString(xmlDocument, 'text/xml').documentElement;
+
+  const xmlBlob = new Blob([xmlNode.outerHTML], { type: 'text/xml' });
+  const xmlUrl = URL.createObjectURL(xmlBlob);
+
+  const xmlWindow = window.open();
+  xmlWindow.document.write('<html><body><pre>');
+  xmlWindow.document.write('<?xml version="1.0" encoding="UTF-8"?>\n');
+  xmlWindow.document.write(new XMLSerializer().serializeToString(xmlNode));
+  xmlWindow.document.write('</pre></body></html>');
 });
